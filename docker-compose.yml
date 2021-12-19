@@ -1,0 +1,29 @@
+version: "3.3"
+
+services:
+  gomora-dapp:
+    build: .
+    container_name: gomora-dapp
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./storage/images:/app/build/storage/images
+      - ./storage/metadata:/app/build/storage/metadata
+      - ./storage/nft-mint-upload.log:/app/build/storage/nft-mint-upload.log
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gomora-dapp.entrypoints=http"
+      - "traefik.http.routers.gomora-dapp.rule=Host(`${API_URL_REST}`)"
+      - "traefik.http.routers.gomora-dapp-secure.entrypoints=https"
+      - "traefik.http.routers.gomora-dapp-secure.rule=Host(`${API_URL_REST}`)"
+      - "traefik.http.routers.gomora-dapp-secure.tls=true"
+      - "traefik.http.routers.gomora-dapp-secure.tls.certresolver=http"
+      - "traefik.http.routers.gomora-dapp-secure.service=gomora-dapp"
+      - "traefik.http.services.gomora-dapp.loadbalancer.server.port=${API_URL_REST_PORT}"
+      - "traefik.docker.network=proxy"
+networks:
+  proxy:
+    external: true

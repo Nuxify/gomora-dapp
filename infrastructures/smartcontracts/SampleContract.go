@@ -1,0 +1,1 @@
+// This is a code generated from building the ABI via `make contract-build`. Check it on Makefile.
