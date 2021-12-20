@@ -86,7 +86,7 @@ func (k *kernel) nftQueryServiceContainer() *nftService.NFTQueryService {
 func registerHandlers() {
 	var err error
 
-	// connect to polygon
+	// connect to blockchain
 	EthHttpClient, err = ethclient.Dial(os.Getenv("ETH_MAINNET_HTTP_ENDPOINT"))
 	if err != nil {
 		log.Fatal(err)
@@ -96,7 +96,7 @@ func registerHandlers() {
 		log.Fatal(err)
 	}
 
-	// legend nft smart contract instance
+	// sample smart contract instance
 	SampleContractContractAddress = common.HexToAddress(os.Getenv("ETH_MAINNET_SAMPLE_CONTRACT_ADDRESS"))
 	SampleContractContractInstance, err = smartcontract.NewSmartcontracts(SampleContractContractAddress, EthWsClient)
 	if err != nil {
