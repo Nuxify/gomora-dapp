@@ -33,7 +33,7 @@ For contract build:
 ## Docker Build
 
 To build, run:
-- make build-docker
+- make run
 
 To run the container:
 - make up
