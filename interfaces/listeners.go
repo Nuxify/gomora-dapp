@@ -10,8 +10,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-
-	nftService "gomora-dapp/module/nft/infrastructure/service"
 )
 
 var (
@@ -19,7 +17,7 @@ var (
 	SampleContractContractABI     abi.ABI
 )
 
-func SampleContractEventWatcher() {
+func SampleContractEventListener() {
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{SampleContractContractAddress},
 	}
@@ -31,7 +29,7 @@ func SampleContractEventWatcher() {
 	}
 
 	// for nft command service
-	commandService := &nftService.NFTCommandService{}
+	commandService := NFTCommandServiceDI()
 
 	for {
 		select {
@@ -56,7 +54,7 @@ func SampleContractEventWatcher() {
 				event := map[string]interface{}{
 					"token_id": mintPurchaseMap["tokenID"].(*big.Int).Int64(),
 					"tier":     mintPurchaseMap["tier"].(string),
-					"wallet":   topics[1],
+					"wallet":   common.HexToAddress(topics[1]).String(),
 				}
 
 				err := commandService.UploadMint(context.TODO(), event)
@@ -75,7 +73,7 @@ func SampleContractEventWatcher() {
 				event := map[string]interface{}{
 					"token_id": mintPurchaseMap["tokenID"].(*big.Int).Int64(),
 					"tier":     mintPurchaseMap["tier"].(string),
-					"wallet":   topics[1],
+					"wallet":   common.HexToAddress(topics[1]).String(),
 				}
 
 				err := commandService.UploadMint(context.TODO(), event)

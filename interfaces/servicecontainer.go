@@ -68,11 +68,14 @@ func (k *kernel) RegisterNFTRESTQueryController() nftREST.NFTQueryController {
 }
 
 //==========================================================================
-
-func (k *kernel) nftCommandServiceContainer() *nftService.NFTCommandService {
+func NFTCommandServiceDI() *nftService.NFTCommandService {
 	service := &nftService.NFTCommandService{}
 
 	return service
+}
+
+func (k *kernel) nftCommandServiceContainer() *nftService.NFTCommandService {
+	return NFTCommandServiceDI()
 }
 
 func (k *kernel) nftQueryServiceContainer() *nftService.NFTQueryService {
@@ -98,19 +101,17 @@ func registerHandlers() {
 
 	// sample smart contract instance
 	SampleContractContractAddress = common.HexToAddress(os.Getenv("ETH_MAINNET_SAMPLE_CONTRACT_ADDRESS"))
+	SampleContractContractABI, err = abi.JSON(strings.NewReader(string(smartcontract.SmartcontractsABI)))
+	if err != nil {
+		log.Fatal(err)
+	}
 	SampleContractContractInstance, err = smartcontract.NewSmartcontracts(SampleContractContractAddress, EthWsClient)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// load abi json
-	SampleContractContractABI, err = abi.JSON(strings.NewReader(string(smartcontract.SmartcontractsABI)))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// run event watcher
-	go SampleContractEventWatcher()
+	// run event listener
+	go SampleContractEventListener()
 }
 
 // ServiceContainer export instantiated service container once
