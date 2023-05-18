@@ -20,7 +20,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 
 	"gomora-dapp/infrastructures/database/mysql"
-	smartcontract "gomora-dapp/infrastructures/smartcontracts"
+	greeter "gomora-dapp/infrastructures/smartcontracts/greeter"
 	nftService "gomora-dapp/module/nft/infrastructure/service"
 	nftREST "gomora-dapp/module/nft/interfaces/http/rest"
 )
@@ -35,16 +35,16 @@ type ServiceContainerInterface interface {
 type kernel struct{}
 
 var (
-	m                              sync.Mutex
-	k                              *kernel
-	containerOnce                  sync.Once
-	mysqlDBHandler                 *mysql.MySQLDBHandler
-	EthHttpClient                  *ethclient.Client
-	EthWsClient                    *ethclient.Client
-	SampleContractContractInstance *smartcontract.Smartcontracts
+	m                       sync.Mutex
+	k                       *kernel
+	containerOnce           sync.Once
+	mysqlDBHandler          *mysql.MySQLDBHandler
+	EthHttpClient           *ethclient.Client
+	EthWsClient             *ethclient.Client
+	GreeterContractInstance *greeter.Greeter
 )
 
-//================================= REST ===================================
+// ================================= REST ===================================
 // RegisterNFTRESTCommandController performs dependency injection to the RegisterNFTRESTCommandController
 func (k *kernel) RegisterNFTRESTCommandController() nftREST.NFTCommandController {
 	service := k.nftCommandServiceContainer()
@@ -67,7 +67,7 @@ func (k *kernel) RegisterNFTRESTQueryController() nftREST.NFTQueryController {
 	return controller
 }
 
-//==========================================================================
+// ==========================================================================
 func NFTCommandServiceDI() *nftService.NFTCommandService {
 	service := &nftService.NFTCommandService{}
 
@@ -80,7 +80,7 @@ func (k *kernel) nftCommandServiceContainer() *nftService.NFTCommandService {
 
 func (k *kernel) nftQueryServiceContainer() *nftService.NFTQueryService {
 	service := &nftService.NFTQueryService{
-		SampleContractContractInstance: SampleContractContractInstance,
+		GreeterContractInstance: GreeterContractInstance,
 	}
 
 	return service
@@ -94,24 +94,25 @@ func registerHandlers() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	EthWsClient, err = ethclient.Dial(os.Getenv("ETH_MAINNET_WS_ENDPOINT"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// sample smart contract instance
-	SampleContractContractAddress = common.HexToAddress(os.Getenv("ETH_MAINNET_SAMPLE_CONTRACT_ADDRESS"))
-	SampleContractContractABI, err = abi.JSON(strings.NewReader(string(smartcontract.SmartcontractsABI)))
+	// load smart contracts
+	GreeterContractAddress = common.HexToAddress(os.Getenv("ETH_MAINNET_GREETER_CONTRACT_ADDRESS"))
+	GreeterContractABI, err = abi.JSON(strings.NewReader(string(greeter.GreeterABI)))
 	if err != nil {
 		log.Fatal(err)
 	}
-	SampleContractContractInstance, err = smartcontract.NewSmartcontracts(SampleContractContractAddress, EthWsClient)
+	GreeterContractInstance, err = greeter.NewGreeter(GreeterContractAddress, EthWsClient)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// run event listener
-	go SampleContractEventListener()
+	go GreeterEventListener()
 }
 
 // ServiceContainer export instantiated service container once

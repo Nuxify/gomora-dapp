@@ -38,6 +38,6 @@ up:
 
 .PHONY: contract-build
 contract-build:
-	rm -rf infrastructures/smartcontracts/SampleContract.go
-	abigen --abi=infrastructures/smartcontracts/build/SampleContract.abi --pkg=smartcontracts --out=infrastructures/smartcontracts/SampleContract.go
+	rm -rf infrastructures/smartcontracts/greeter/Greeter.go
+	abigen --abi=infrastructures/smartcontracts/build/Greeter.abi --pkg=greeter --out=infrastructures/smartcontracts/greeter/Greeter.go
 	

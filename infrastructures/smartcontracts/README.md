@@ -1,1 +1,1 @@
-Smart contract: <paste-link-here>
+Greeter Goerli: https://goerli.etherscan.io/address/0x093eb7ccAfa165D8D35c6666984de510Be58cBd2#code

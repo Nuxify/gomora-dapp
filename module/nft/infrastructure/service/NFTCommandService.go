@@ -7,12 +7,14 @@ import (
 	"os"
 
 	"gomora-dapp/internal/constants"
+
+	"gomora-dapp/module/nft/infrastructure/service/types"
 )
 
 // NFTCommandService handles the nft query service logic
 type NFTCommandService struct{}
 
-func (service *NFTCommandService) UploadMint(ctx context.Context, data map[string]interface{}) error {
+func (service *NFTCommandService) UploadMint(ctx context.Context, data types.Upload) error {
 	// TODO: logic to handle upload mint event sample
 	return nil
 }

@@ -4,29 +4,33 @@ import (
 	"context"
 	"log"
 	"math/big"
+	"time"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/event"
+
+	serviceTypes "gomora-dapp/module/nft/infrastructure/service/types"
 )
 
 var (
-	SampleContractContractAddress common.Address
-	SampleContractContractABI     abi.ABI
+	GreeterContractAddress common.Address
+	GreeterContractABI     abi.ABI
 )
 
-func SampleContractEventListener() {
+// GreeterEventListener greeter contract indexer
+func GreeterEventListener() {
 	query := ethereum.FilterQuery{
-		Addresses: []common.Address{SampleContractContractAddress},
+		Addresses: []common.Address{GreeterContractAddress},
 	}
 
 	logs := make(chan types.Log)
-	sub, err := EthWsClient.SubscribeFilterLogs(context.Background(), query, logs)
-	if err != nil {
-		panic(err)
-	}
+	sub := event.Resubscribe(2*time.Second, func(ctx context.Context) (event.Subscription, error) {
+		return EthWsClient.SubscribeFilterLogs(ctx, query, logs)
+	})
 
 	// for nft command service
 	commandService := NFTCommandServiceDI()
@@ -42,19 +46,24 @@ func SampleContractEventListener() {
 				topics[i] = vLog.Topics[i].Hex()
 			}
 
+			txHash := vLog.TxHash.Hex()
+			block, _ := EthHttpClient.BlockByNumber(context.TODO(), big.NewInt(int64(vLog.BlockNumber)))
+			blockTimestamp := int64(block.Time())
 			eventSignature := topics[0]
 
-			/// on firstEvent
-			mintEventName := "Mint"
-			mintPurchaseMap := map[string]interface{}{}
+			/// LogMint event
+			eventName := "Mint"
+			eventData := map[string]interface{}{}
 			mintTopic := crypto.Keccak256Hash([]byte("Mint(address,uint256,string)"))
 
-			err := SampleContractContractABI.UnpackIntoMap(mintPurchaseMap, mintEventName, vLog.Data)
+			err := GreeterContractABI.UnpackIntoMap(eventData, eventName, vLog.Data)
 			if err == nil && eventSignature == mintTopic.Hex() {
-				event := map[string]interface{}{
-					"token_id": mintPurchaseMap["tokenID"].(*big.Int).Int64(),
-					"tier":     mintPurchaseMap["tier"].(string),
-					"wallet":   common.HexToAddress(topics[1]).String(),
+				event := serviceTypes.Upload{
+					TxHash:         txHash,
+					BlockTimestamp: blockTimestamp,
+					TokenID:        eventData["tokenID"].(*big.Int).Int64(),
+					Tier:           eventData["tier"].(string),
+					Wallet:         common.HexToAddress(topics[1]).String(),
 				}
 
 				err := commandService.UploadMint(context.TODO(), event)
@@ -63,22 +72,23 @@ func SampleContractEventListener() {
 				}
 			}
 
-			/// on secondEvent
-			BatchMintEventName := "BatchMint"
-			BatchMintPurchaseMap := map[string]interface{}{}
-			BatchMintTopic := crypto.Keccak256Hash([]byte("BatchMint(address,uint256,string)"))
+			/// LogBatchMint event
+			eventData = map[string]interface{}{}
+			mintTopic = crypto.Keccak256Hash([]byte("BatchMint(address,uint256,string)"))
 
-			err = SampleContractContractABI.UnpackIntoMap(BatchMintPurchaseMap, BatchMintEventName, vLog.Data)
-			if err == nil && eventSignature == BatchMintTopic.Hex() {
-				event := map[string]interface{}{
-					"token_id": mintPurchaseMap["tokenID"].(*big.Int).Int64(),
-					"tier":     mintPurchaseMap["tier"].(string),
-					"wallet":   common.HexToAddress(topics[1]).String(),
+			err = GreeterContractABI.UnpackIntoMap(eventData, eventName, vLog.Data)
+			if err == nil && eventSignature == mintTopic.Hex() {
+				event := serviceTypes.Upload{
+					TxHash:         txHash,
+					BlockTimestamp: blockTimestamp,
+					TokenID:        eventData["tokenID"].(*big.Int).Int64(),
+					Tier:           eventData["tier"].(string),
+					Wallet:         common.HexToAddress(topics[1]).String(),
 				}
 
 				err := commandService.UploadMint(context.TODO(), event)
 				if err != nil {
-					log.Println("[error] BatchMint cannot upload mint", err)
+					log.Println("[error] Mint cannot upload mint", err)
 				}
 			}
 		}
