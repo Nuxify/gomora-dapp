@@ -5,6 +5,10 @@ services:
     build: .
     container_name: gomora-dapp
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
     networks:
       - proxy
     volumes:
@@ -21,7 +25,7 @@ services:
       - "traefik.http.routers.gomora-dapp-secure.rule=Host(`${API_URL_REST}`)"
       - "traefik.http.routers.gomora-dapp-secure.tls=true"
       - "traefik.http.routers.gomora-dapp-secure.tls.certresolver=http"
-      - "traefik.http.routers.gomora-dapp-secure.service=gomora-dapp"
+      - "traefik.http.routers.gomora-dapp-secure.service={API_NAME}"
       - "traefik.http.services.gomora-dapp.loadbalancer.server.port=${API_URL_REST_PORT}"
       - "traefik.docker.network=proxy"
 networks:
