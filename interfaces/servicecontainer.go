@@ -69,7 +69,9 @@ func (k *kernel) RegisterNFTRESTQueryController() nftREST.NFTQueryController {
 
 // ==========================================================================
 func NFTCommandServiceDI() *nftService.NFTCommandService {
-	service := &nftService.NFTCommandService{}
+	service := &nftService.NFTCommandService{
+		GreeterContractInstance: GreeterContractInstance,
+	}
 
 	return service
 }

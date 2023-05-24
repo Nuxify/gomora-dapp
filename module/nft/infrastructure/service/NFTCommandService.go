@@ -6,13 +6,15 @@ import (
 	"log"
 	"os"
 
+	greeter "gomora-dapp/infrastructures/smartcontracts/greeter"
 	"gomora-dapp/internal/constants"
-
 	"gomora-dapp/module/nft/infrastructure/service/types"
 )
 
-// NFTCommandService handles the nft query service logic
-type NFTCommandService struct{}
+// NFTCommandService handles the nft command service logic
+type NFTCommandService struct {
+	GreeterContractInstance *greeter.Greeter
+}
 
 func (service *NFTCommandService) UploadMint(ctx context.Context, data types.Upload) error {
 	// TODO: logic to handle upload mint event sample
