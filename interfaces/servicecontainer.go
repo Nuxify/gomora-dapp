@@ -115,6 +115,7 @@ func registerHandlers() {
 
 	// run event listener
 	go GreeterEventListener()
+	go GreeterPollFilter(os.Getenv("ETH_MAINNET_HTTP_ENDPOINT")) // TODO: check if chain rpc supports eth_filterChanges
 }
 
 // ServiceContainer export instantiated service container once
