@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
 
 	"github.com/go-chi/chi"
@@ -69,6 +70,36 @@ func (router *router) InitRouter() *chi.Mux {
 			r.Route("/nft", func(r chi.Router) {
 				r.Get("/metadata/{tokenID}", nftQueryController.GetNFTByID)
 				r.Get("/images/{fileName}", nftQueryController.GetNFTImage)
+
+				// not public
+				r.Get("/replay", func(w http.ResponseWriter, r *http.Request) {
+					fromBlockString := r.URL.Query().Get("fromBlock")
+					toBlockString := r.URL.Query().Get("toBlock")
+
+					fromBlock, _ := strconv.Atoi(fromBlockString)
+					toBlock, _ := strconv.Atoi(toBlockString)
+
+					err := interfaces.GreeterEventListenerReplayer(int64(fromBlock), int64(toBlock))
+					if err != nil {
+						response := viewmodels.HTTPResponseVM{
+							Status:  http.StatusInternalServerError,
+							Success: false,
+							Message: "Cannot run Greeter contract replayer.",
+							Data:    err.Error(),
+						}
+
+						response.JSON(w)
+						return
+					}
+
+					response := viewmodels.HTTPResponseVM{
+						Status:  http.StatusOK,
+						Success: true,
+						Message: "Successfully replayed Greeter events.",
+					}
+
+					response.JSON(w)
+				})
 			})
 		})
 	})
