@@ -1,5 +1,5 @@
 # Gomora dApp
-A Gomora template for building dApps and web3-powered API and smart contract listeners
+A Gomora template for building EVM-compatible API and smart contract indexers and listeners
 
 ## Local Development
 
