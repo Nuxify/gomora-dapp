@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/ethereum/go-ethereum"
@@ -13,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/event"
 
+	ethRPC "gomora-dapp/internal/ethereum"
 	"gomora-dapp/module/nft/infrastructure/service"
 	serviceTypes "gomora-dapp/module/nft/infrastructure/service/types"
 )
@@ -80,6 +82,61 @@ func GreeterEventListenerReplayer(fromBlock, toBlock int64) error {
 	}
 
 	return nil
+}
+
+// GreeterPollFilter poll filter missed events backup
+func GreeterPollFilter(rpcURL string) {
+	// create a new filter
+	query := ethereum.FilterQuery{
+		Addresses: []common.Address{GreeterContractAddress},
+	}
+
+	filterID, err := ethRPC.NewFilter(rpcURL, query)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("POLL FILTER ID:", filterID)
+
+	// for nft command service
+	nftCommandService := NFTCommandServiceDI()
+
+	var lastKnownTimestamp int64
+
+	// get filter changes
+	for {
+		logs, err := ethRPC.GetFilterChanges(rpcURL, filterID)
+		if err != nil {
+			log.Println(err)
+
+			// check if filter not found
+			if strings.Contains(err.Error(), "not found") {
+				filterID, _ = ethRPC.NewFilter(rpcURL, query)
+				if err != nil {
+					log.Println(err)
+				}
+
+				log.Println("POLL FILTER ID:", filterID)
+			}
+			continue
+		}
+
+		log.Println("POLL FILTER:", len(logs))
+
+		for _, vLog := range logs {
+			// get block timestamp
+			block, err := EthHttpClient.BlockByNumber(context.TODO(), big.NewInt(int64(vLog.BlockNumber)))
+			if err != nil {
+				log.Println(err)
+			} else {
+				lastKnownTimestamp = int64(block.Time())
+			}
+
+			greeterEventsHandler(nftCommandService, vLog, lastKnownTimestamp)
+		}
+
+		time.Sleep(30 * time.Second)
+	}
 }
 
 // Handle greeter contract events
