@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/event"
 
-	ethRPC "gomora-dapp/internal/ethereum"
+	ethRPC "gomora-dapp/internal/ethereum/rpc"
 	"gomora-dapp/module/nft/infrastructure/service"
 	serviceTypes "gomora-dapp/module/nft/infrastructure/service/types"
 )
