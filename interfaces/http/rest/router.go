@@ -68,10 +68,12 @@ func (router *router) InitRouter() *chi.Mux {
 		r.Route("/v1", func(r chi.Router) {
 			// routes for nft
 			r.Route("/nft", func(r chi.Router) {
-				r.Get("/metadata/{tokenID}", nftQueryController.GetNFTByID)
-				r.Get("/images/{fileName}", nftQueryController.GetNFTImage)
+				r.Get("/greeting/latest", nftQueryController.GetGreeting)
+				// nft-related routes (example only)
+				// r.Get("/metadata/{tokenID}", nftQueryController.GetNFTByID)
+				// r.Get("/images/{fileName}", nftQueryController.GetNFTImage)
 
-				// not public
+				// FIXME: should not be public
 				r.Get("/replay", func(w http.ResponseWriter, r *http.Request) {
 					fromBlockString := r.URL.Query().Get("fromBlock")
 					toBlockString := r.URL.Query().Get("toBlock")

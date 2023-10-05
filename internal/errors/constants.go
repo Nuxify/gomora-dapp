@@ -27,4 +27,18 @@ const (
 	SystemScriptFailed string = "SYSTEM_SCRIPT_FAILED"
 	// UnauthorizedAccess is the code for accessing restricted routes
 	UnauthorizedAccess string = "UNAUTHORIZED_ACCESS"
+
+	// Ethereum-related errors
+	EthInvalidListingPendingState    string = "ETH_INVALID_LISTING_PENDING_STATE"
+	EthInvalidControllerPrivateKey   string = "ETH_INVALID_CONTROLLER_PRIVATE_KEY"
+	EthInvalidControllerPublicKey    string = "ETH_INVALID_CONTROLLER_PUBLIC_KEY"
+	EthInvalidNonce                  string = "ETH_INVALID_NONCE"
+	EthInvalidGasPrice               string = "ETH_INVALID_GAS_PRICE"
+	EthInvalidChainID                string = "ETH_INVALID_CHAIN_ID"
+	EthInvalidKeyedTransactionConfig string = "ETH_INVALID_KEYED_TRANSACTION_CONFIG"
+	EthInvalidTypedDataSignature     string = "ETH_INVALID_TYPED_DATA_SIGNATURE"
+	EthInvalidType                   string = "ETH_INVALID_TYPE"
+	EthRPCFailed                     string = "ETH_RPC_FAILED"
+	EthTransactionNotMined           string = "ETH_TRANSACTION_NOT_MINED"
+	EthTransferNotApproved           string = "ETH_TRANSFER_NOT_APPROVED"
 )

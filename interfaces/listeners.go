@@ -14,9 +14,10 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/event"
 
+	"gomora-dapp/infrastructures/smartcontracts/greeter"
 	ethRPC "gomora-dapp/internal/ethereum/rpc"
 	"gomora-dapp/module/nft/infrastructure/service"
-	serviceTypes "gomora-dapp/module/nft/infrastructure/service/types"
+	nftServiceTypes "gomora-dapp/module/nft/infrastructure/service/types"
 )
 
 var (
@@ -43,7 +44,7 @@ func GreeterEventListener() {
 		case err := <-sub.Err():
 			panic(err)
 		case vLog := <-logs:
-			greeterEventsHandler(nftCommandService, vLog, time.Now().Unix())
+			greeterEventsHandler(nftCommandService, vLog, true)
 		}
 	}
 }
@@ -67,18 +68,8 @@ func GreeterEventListenerReplayer(fromBlock, toBlock int64) error {
 	// for nft command service
 	nftCommandService := NFTCommandServiceDI()
 
-	var lastKnownTimestamp int64
-
 	for _, vLog := range logs {
-		// get block timestamp
-		block, err := EthHttpClient.BlockByNumber(context.TODO(), big.NewInt(int64(vLog.BlockNumber)))
-		if err != nil {
-			log.Println(err)
-		} else {
-			lastKnownTimestamp = int64(block.Time())
-		}
-
-		greeterEventsHandler(nftCommandService, vLog, lastKnownTimestamp)
+		greeterEventsHandler(nftCommandService, vLog, false)
 	}
 
 	return nil
@@ -101,8 +92,6 @@ func GreeterPollFilter(rpcURL string) {
 	// for nft command service
 	nftCommandService := NFTCommandServiceDI()
 
-	var lastKnownTimestamp int64
-
 	// get filter changes
 	for {
 		logs, err := ethRPC.GetFilterChanges(rpcURL, filterID)
@@ -124,23 +113,15 @@ func GreeterPollFilter(rpcURL string) {
 		log.Println("POLL FILTER:", len(logs))
 
 		for _, vLog := range logs {
-			// get block timestamp
-			block, err := EthHttpClient.BlockByNumber(context.TODO(), big.NewInt(int64(vLog.BlockNumber)))
-			if err != nil {
-				log.Println(err)
-			} else {
-				lastKnownTimestamp = int64(block.Time())
-			}
-
-			greeterEventsHandler(nftCommandService, vLog, lastKnownTimestamp)
+			greeterEventsHandler(nftCommandService, vLog, false)
 		}
 
-		time.Sleep(30 * time.Second)
+		time.Sleep(3 * time.Minute)
 	}
 }
 
 // Handle greeter contract events
-func greeterEventsHandler(nftCommandService *service.NFTCommandService, vLog types.Log, blockTimestampInSeconds int64) {
+func greeterEventsHandler(nftCommandService *service.NFTCommandService, vLog types.Log, isFromWS bool) {
 	// get topics, topic 0 is signature of event, topic 1 is first indexed
 	var topics [4]string
 	for i := range vLog.Topics {
@@ -150,44 +131,24 @@ func greeterEventsHandler(nftCommandService *service.NFTCommandService, vLog typ
 	txHash := vLog.TxHash.Hex()
 	eventSignature := topics[0]
 
-	/// LogMint event
-	eventName := "LogMint"
-	eventData := map[string]interface{}{}
-	mintTopic := crypto.Keccak256Hash([]byte("LogMint(address,uint256,string)"))
+	/// LogSetGreeting event
+	mintTopic := crypto.Keccak256Hash([]byte("LogSetGreeting(string,uint256)"))
+	if eventSignature == mintTopic.Hex() {
+		eventName := "LogSetGreeting"
+		eventData := greeter.GreeterLogSetGreeting{}
 
-	err := GreeterContractABI.UnpackIntoMap(eventData, eventName, vLog.Data)
-	if err == nil && eventSignature == mintTopic.Hex() {
-		event := serviceTypes.Upload{
-			TxHash:         txHash,
-			BlockTimestamp: blockTimestampInSeconds,
-			TokenID:        eventData["tokenID"].(*big.Int).Int64(),
-			Tier:           eventData["tier"].(string),
-			Wallet:         common.HexToAddress(topics[1]).String(),
-		}
+		err := GreeterContractABI.UnpackIntoInterface(&eventData, eventName, vLog.Data)
+		if err == nil {
+			event := nftServiceTypes.CreateNFTLogSetGreeting{
+				Greeting:  eventData.Greeting,
+				Timestamp: eventData.Timestamp.Uint64(),
+				IsFromWS:  isFromWS,
+			}
 
-		err := nftCommandService.UploadMint(context.TODO(), event)
-		if err != nil {
-			log.Println("[error] LogMint cannot upload mint", err)
-		}
-	}
-
-	/// LogBatchMint event
-	eventData = map[string]interface{}{}
-	mintTopic = crypto.Keccak256Hash([]byte("LogBatchMint(address,uint256,string)"))
-
-	err = GreeterContractABI.UnpackIntoMap(eventData, eventName, vLog.Data)
-	if err == nil && eventSignature == mintTopic.Hex() {
-		event := serviceTypes.Upload{
-			TxHash:         txHash,
-			BlockTimestamp: blockTimestampInSeconds,
-			TokenID:        eventData["tokenID"].(*big.Int).Int64(),
-			Tier:           eventData["tier"].(string),
-			Wallet:         common.HexToAddress(topics[1]).String(),
-		}
-
-		err := nftCommandService.UploadMint(context.TODO(), event)
-		if err != nil {
-			log.Println("[error] LogBatchMint cannot upload mint", err)
+			err := nftCommandService.CreateNFTLogSetGreeting(context.TODO(), txHash, GreeterContractAddress.Hex(), event)
+			if err != nil {
+				log.Println("[error] LogSetGreeting cannot update", err)
+			}
 		}
 	}
 }

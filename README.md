@@ -30,6 +30,8 @@ For contract build:
 - make contract-build
 - NOTE: the output for this is in infrastructures/smartcontracts
 
+> You can easily listen to the example Greeter contract (https://mumbai.polygonscan.com/address/0x927ec7f1f1CA6b09d0c448868aAB2C56d465a6e8#code) deployed in Polygon Testnet (Mumbai)
+
 ## Docker Build
 
 To build, run:

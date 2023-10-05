@@ -1,9 +1,7 @@
 package types
 
-type Upload struct {
-	TxHash         string
-	BlockTimestamp int64
-	TokenID        int64
-	Tier           string
-	Wallet         string
+type CreateNFTLogSetGreeting struct {
+	Greeting  string `json:"greeting"`
+	Timestamp uint64 `json:"timestamp"`
+	IsFromWS  bool
 }

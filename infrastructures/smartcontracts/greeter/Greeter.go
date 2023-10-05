@@ -30,7 +30,7 @@ var (
 
 // GreeterMetaData contains all meta data concerning the Greeter contract.
 var GreeterMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_greeting\",\"type\":\"string\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"greet\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_greeting\",\"type\":\"string\"}],\"name\":\"setGreeting\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_greeting\",\"type\":\"string\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"greeting\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"LogSetGreeting\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"greet\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_greeting\",\"type\":\"string\"}],\"name\":\"setGreeting\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
 // GreeterABI is the input ABI used to generate the binding from.
@@ -229,4 +229,139 @@ func (_Greeter *GreeterSession) SetGreeting(_greeting string) (*types.Transactio
 // Solidity: function setGreeting(string _greeting) returns()
 func (_Greeter *GreeterTransactorSession) SetGreeting(_greeting string) (*types.Transaction, error) {
 	return _Greeter.Contract.SetGreeting(&_Greeter.TransactOpts, _greeting)
+}
+
+// GreeterLogSetGreetingIterator is returned from FilterLogSetGreeting and is used to iterate over the raw logs and unpacked data for LogSetGreeting events raised by the Greeter contract.
+type GreeterLogSetGreetingIterator struct {
+	Event *GreeterLogSetGreeting // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *GreeterLogSetGreetingIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(GreeterLogSetGreeting)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(GreeterLogSetGreeting)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *GreeterLogSetGreetingIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *GreeterLogSetGreetingIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// GreeterLogSetGreeting represents a LogSetGreeting event raised by the Greeter contract.
+type GreeterLogSetGreeting struct {
+	Greeting  string
+	Timestamp *big.Int
+	Raw       types.Log // Blockchain specific contextual infos
+}
+
+// FilterLogSetGreeting is a free log retrieval operation binding the contract event 0xbc3e95bcaa12e99c44d85e174901aa4dcf7ff752f6d4a7c59d725938144e95cd.
+//
+// Solidity: event LogSetGreeting(string greeting, uint256 timestamp)
+func (_Greeter *GreeterFilterer) FilterLogSetGreeting(opts *bind.FilterOpts) (*GreeterLogSetGreetingIterator, error) {
+
+	logs, sub, err := _Greeter.contract.FilterLogs(opts, "LogSetGreeting")
+	if err != nil {
+		return nil, err
+	}
+	return &GreeterLogSetGreetingIterator{contract: _Greeter.contract, event: "LogSetGreeting", logs: logs, sub: sub}, nil
+}
+
+// WatchLogSetGreeting is a free log subscription operation binding the contract event 0xbc3e95bcaa12e99c44d85e174901aa4dcf7ff752f6d4a7c59d725938144e95cd.
+//
+// Solidity: event LogSetGreeting(string greeting, uint256 timestamp)
+func (_Greeter *GreeterFilterer) WatchLogSetGreeting(opts *bind.WatchOpts, sink chan<- *GreeterLogSetGreeting) (event.Subscription, error) {
+
+	logs, sub, err := _Greeter.contract.WatchLogs(opts, "LogSetGreeting")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(GreeterLogSetGreeting)
+				if err := _Greeter.contract.UnpackLog(event, "LogSetGreeting", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseLogSetGreeting is a log parse operation binding the contract event 0xbc3e95bcaa12e99c44d85e174901aa4dcf7ff752f6d4a7c59d725938144e95cd.
+//
+// Solidity: event LogSetGreeting(string greeting, uint256 timestamp)
+func (_Greeter *GreeterFilterer) ParseLogSetGreeting(log types.Log) (*GreeterLogSetGreeting, error) {
+	event := new(GreeterLogSetGreeting)
+	if err := _Greeter.contract.UnpackLog(event, "LogSetGreeting", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
 }

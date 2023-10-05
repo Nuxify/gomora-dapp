@@ -108,7 +108,7 @@ func registerHandlers() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	GreeterContractInstance, err = greeter.NewGreeter(GreeterContractAddress, EthWsClient)
+	GreeterContractInstance, err = greeter.NewGreeter(GreeterContractAddress, EthHttpClient)
 	if err != nil {
 		log.Fatal(err)
 	}
