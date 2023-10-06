@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	greeter "gomora-dapp/infrastructures/smartcontracts/greeter"
-
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+
+	greeter "gomora-dapp/infrastructures/smartcontracts/greeter"
 )
 
 // NFTQueryService handles the nft query service logic
