@@ -100,12 +100,15 @@ func GreeterPollFilter(rpcURL string) {
 
 			// check if filter not found
 			if strings.Contains(err.Error(), "not found") {
-				filterID, _ = ethRPC.NewFilter(rpcURL, query)
+				filterID, err = ethRPC.NewFilter(rpcURL, query)
 				if err != nil {
 					log.Println(err)
+					time.Sleep(3 * time.Second)
+					continue
 				}
 
 				log.Println("POLL FILTER ID:", filterID)
+				time.Sleep(3 * time.Second)
 			}
 			continue
 		}
