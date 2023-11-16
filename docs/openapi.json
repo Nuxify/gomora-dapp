@@ -1,11 +1,11 @@
 {
     "openapi": "3.0.2",
     "info": {
-        "title": "Gomora DApp API",
+        "title": "Gomora dApp API",
         "description": "A Gomora template for building EVM-compatible API and smart contract indexers and listeners",
         "termsOfService": "https://github.com/Nuxify/gomora-dapp",
         "contact": {
-            "name": "Gomora DApp API Developer",
+            "name": "Gomora dApp API Developer",
             "email": "hello@nuxify.tech"
         },
         "version": "1.0.0"
@@ -56,8 +56,8 @@
                 "tags": [
                     "nft"
                 ],
-                "summary": "Get Greeter Event",
-                "description": "Gets greeter event",
+                "summary": "Replay Greeter Contract Events",
+                "description": "Replays greeter contract events by block number",
                 "parameters": [
                     {
                         "name": "fromBlock",
