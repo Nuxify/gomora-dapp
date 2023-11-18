@@ -4,7 +4,7 @@ services:
   gomora-dapp:
     build: .
     container_name: gomora-dapp
-    mem_limit: “3g”
+    mem_limit: "3g"
     restart: unless-stopped
     logging:
       driver: "json-file"
