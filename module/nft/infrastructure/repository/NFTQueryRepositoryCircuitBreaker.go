@@ -12,17 +12,17 @@ type NFTQueryRepositoryCircuitBreaker struct {
 	repository.NFTQueryRepositoryInterface
 }
 
-// SelectNFTContractEventLogs is a decorator for the select nft greeter contract event logs repository
-func (repository *NFTQueryRepositoryCircuitBreaker) SelectNFTContractEventLogs() ([]entity.NFTGreeterContractEventLogs, error) {
-	output := make(chan []entity.NFTGreeterContractEventLogs, 1)
-	hystrix.ConfigureCommand("select_nft_greeter_contract_event_logs", config.Settings())
-	errors := hystrix.Go("select_nft_greeter_contract_event_logs", func() error {
-		user, err := repository.NFTQueryRepositoryInterface.SelectNFTContractEventLogs()
+// SelectGreeterContractEventLogs is a decorator for the select greeter contract event logs repository
+func (repository *NFTQueryRepositoryCircuitBreaker) SelectGreeterContractEventLogs() ([]entity.GreeterContractEventLog, error) {
+	output := make(chan []entity.GreeterContractEventLog, 1)
+	hystrix.ConfigureCommand("select_greeter_contract_event_logs", config.Settings())
+	errors := hystrix.Go("select_greeter_contract_event_logs", func() error {
+		logs, err := repository.NFTQueryRepositoryInterface.SelectGreeterContractEventLogs()
 		if err != nil {
 			return err
 		}
 
-		output <- user
+		output <- logs
 		return nil
 	}, nil)
 
@@ -30,6 +30,6 @@ func (repository *NFTQueryRepositoryCircuitBreaker) SelectNFTContractEventLogs()
 	case out := <-output:
 		return out, nil
 	case err := <-errors:
-		return []entity.NFTGreeterContractEventLogs{}, err
+		return []entity.GreeterContractEventLog{}, err
 	}
 }

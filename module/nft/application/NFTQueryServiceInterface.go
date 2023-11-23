@@ -8,5 +8,5 @@ import (
 // NFTQueryServiceInterface holds the implementable methods for the nft query service
 type NFTQueryServiceInterface interface {
 	GetGreeting(ctx context.Context) (string, error)
-	GetNFTGreeterContractEventLogs(ctx context.Context) ([]entity.NFTGreeterContractEventLogs, error)
+	GetGreeterContractEventLogs(ctx context.Context) ([]entity.GreeterContractEventLog, error)
 }

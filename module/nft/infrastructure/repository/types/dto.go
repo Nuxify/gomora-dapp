@@ -2,7 +2,7 @@ package types
 
 import "time"
 
-type CreateNFTContractEventLog struct {
+type CreateGreeterContractEventLog struct {
 	TxHash          string
 	ContractAddress string
 	Event           string

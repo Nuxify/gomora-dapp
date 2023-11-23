@@ -8,19 +8,19 @@ import (
 	repositoryTypes "gomora-dapp/module/nft/infrastructure/repository/types"
 )
 
-// UserCommandRepositoryCircuitBreaker circuit breaker for user command repository
+// UserCommandRepositoryCircuitBreaker circuit breaker for nft command repository
 type NFTCommandRepositoryCircuitBreaker struct {
 	repository.NFTCommandRepositoryInterface
 }
 
 var config = hystrix_config.Config{}
 
-// InsertNFTContractEventLog is the decorator for the nft repository insert nft greeter contract event log
-func (repository *NFTCommandRepositoryCircuitBreaker) InsertNFTContractEventLog(data repositoryTypes.CreateNFTContractEventLog) error {
+// InsertGreeterContractEventLog is the decorator for the nft repository insert greeter contract event log
+func (repository *NFTCommandRepositoryCircuitBreaker) InsertGreeterContractEventLog(data repositoryTypes.CreateGreeterContractEventLog) error {
 	output := make(chan bool, 1)
-	hystrix.ConfigureCommand("insert_nft_greeter_contract_event_log", config.Settings())
-	errors := hystrix.Go("insert_nft_greeter_contract_event_log", func() error {
-		err := repository.NFTCommandRepositoryInterface.InsertNFTContractEventLog(data)
+	hystrix.ConfigureCommand("insert_greeter_contract_event_log", config.Settings())
+	errors := hystrix.Go("insert_greeter_contract_event_log", func() error {
+		err := repository.NFTCommandRepositoryInterface.InsertGreeterContractEventLog(data)
 		if err != nil {
 			return err
 		}

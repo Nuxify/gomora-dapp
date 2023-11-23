@@ -42,8 +42,10 @@ func (controller *NFTQueryController) GetGreeting(w http.ResponseWriter, r *http
 
 	response.JSON(w)
 }
-func (controller *NFTQueryController) GetNFTGreeterContractEventLogs(w http.ResponseWriter, r *http.Request) {
-	res, err := controller.NFTQueryServiceInterface.GetNFTGreeterContractEventLogs(context.TODO())
+
+// GetGreeterContractEventLogs get greeter contract event logs
+func (controller *NFTQueryController) GetGreeterContractEventLogs(w http.ResponseWriter, r *http.Request) {
+	res, err := controller.NFTQueryServiceInterface.GetGreeterContractEventLogs(context.TODO())
 	if err != nil {
 		var httpCode int
 		var errorMsg string
@@ -68,25 +70,26 @@ func (controller *NFTQueryController) GetNFTGreeterContractEventLogs(w http.Resp
 		return
 	}
 
-	var logs []types.GetNFTContractEventLog
+	var logs []types.GreeterContractEventLogResponse
 
 	for _, logRes := range res {
 		var metadata map[string]interface{}
 		// decode metadata
 		_ = json.Unmarshal([]byte(logRes.Metadata), &metadata)
-		logs = append(logs, types.GetNFTContractEventLog{
+
+		logs = append(logs, types.GreeterContractEventLogResponse{
 			TxHash:          logRes.TxHash,
 			ContractAddress: logRes.ContractAddress,
 			Event:           logRes.Event,
 			Metadata:        metadata,
-			BlockTimestamp:  uint(logRes.BlockTimestamp.Unix()),
+			BlockTimestamp:  uint64(logRes.BlockTimestamp.Unix()),
 		})
 	}
 
 	response := viewmodels.HTTPResponseVM{
 		Status:  http.StatusOK,
 		Success: true,
-		Message: "Successfully fetched nft greeter contract event logs.",
+		Message: "Successfully fetched greeter contract event logs.",
 		Data:    logs,
 	}
 

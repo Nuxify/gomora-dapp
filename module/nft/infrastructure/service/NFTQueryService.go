@@ -26,11 +26,11 @@ func (service *NFTQueryService) GetGreeting(ctx context.Context) (string, error)
 	return greeting, nil
 }
 
-// GetAllActiveListings get all active listings
-func (service *NFTQueryService) GetNFTGreeterContractEventLogs(ctx context.Context) ([]entity.NFTGreeterContractEventLogs, error) {
-	res, err := service.NFTQueryRepositoryInterface.SelectNFTContractEventLogs()
+// GetGreeterContractEventLogs get greeter contract event logs
+func (service *NFTQueryService) GetGreeterContractEventLogs(ctx context.Context) ([]entity.GreeterContractEventLog, error) {
+	res, err := service.NFTQueryRepositoryInterface.SelectGreeterContractEventLogs()
 	if err != nil {
-		return []entity.NFTGreeterContractEventLogs{}, err
+		return []entity.GreeterContractEventLog{}, err
 	}
 
 	return res, nil

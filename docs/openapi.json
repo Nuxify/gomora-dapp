@@ -105,21 +105,5 @@
         }
       }
     }
-  },
-  "components": {
-    "schemas": {
-      "CreateRecordRequest": {
-        "required": ["id", "data"],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "data": {
-            "type": "string"
-          }
-        }
-      }
-    }
   }
 }

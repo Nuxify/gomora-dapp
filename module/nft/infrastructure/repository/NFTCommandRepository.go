@@ -17,9 +17,9 @@ type NFTCommandRepository struct {
 	types.MySQLDBHandlerInterface
 }
 
-// InsertNFTContractEventLog insert a nft greeter contract event log record
-func (repository *NFTCommandRepository) InsertNFTContractEventLog(data repositoryTypes.CreateNFTContractEventLog) error {
-	eventLog := entity.NFTGreeterContractEventLogs{
+// InsertGreeterContractEventLog insert a greeter contract event log record
+func (repository *NFTCommandRepository) InsertGreeterContractEventLog(data repositoryTypes.CreateGreeterContractEventLog) error {
+	eventLog := entity.GreeterContractEventLog{
 		TxHash:          data.TxHash,
 		ContractAddress: data.ContractAddress,
 		Event:           data.Event,

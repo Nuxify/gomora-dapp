@@ -15,20 +15,20 @@ type NFTQueryRepository struct {
 	types.MySQLDBHandlerInterface
 }
 
-// SelectNFTContractEventLogs select marketplace active listings
-func (repository *NFTQueryRepository) SelectNFTContractEventLogs() ([]entity.NFTGreeterContractEventLogs, error) {
-	var listing entity.NFTGreeterContractEventLogs
-	var listings []entity.NFTGreeterContractEventLogs
+// SelectGreeterContractEventLogs select greeter contract event logs
+func (repository *NFTQueryRepository) SelectGreeterContractEventLogs() ([]entity.GreeterContractEventLog, error) {
+	var eventLog entity.GreeterContractEventLog
+	var eventLogs []entity.GreeterContractEventLog
 
-	stmt := fmt.Sprintf("SELECT * FROM %s ORDER BY block_timestamp DESC", listing.GetModelName())
+	stmt := fmt.Sprintf("SELECT * FROM %s ORDER BY block_timestamp DESC", eventLog.GetModelName())
 
-	err := repository.Query(stmt, map[string]interface{}{}, &listings)
+	err := repository.Query(stmt, map[string]interface{}{}, &eventLogs)
 	if err != nil {
 		log.Println(err)
-		return []entity.NFTGreeterContractEventLogs{}, errors.New(apiError.DatabaseError)
-	} else if len(listings) == 0 {
-		return []entity.NFTGreeterContractEventLogs{}, errors.New(apiError.MissingRecord)
+		return []entity.GreeterContractEventLog{}, errors.New(apiError.DatabaseError)
+	} else if len(eventLogs) == 0 {
+		return []entity.GreeterContractEventLog{}, errors.New(apiError.MissingRecord)
 	}
 
-	return listings, nil
+	return eventLogs, nil
 }
