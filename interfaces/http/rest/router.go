@@ -77,6 +77,7 @@ func (router *router) InitRouter() *chi.Mux {
 			// routes for nft
 			r.Route("/nft", func(r chi.Router) {
 				r.Get("/greeting/latest", nftQueryController.GetGreeting)
+				r.Get("/greeting/logs", nftQueryController.GetGreeterContractEventLogs)
 				// nft-related routes (example only)
 				// r.Get("/metadata/{tokenID}", nftQueryController.GetNFTByID)
 				// r.Get("/images/{fileName}", nftQueryController.GetNFTImage)

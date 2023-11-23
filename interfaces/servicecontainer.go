@@ -21,6 +21,7 @@ import (
 
 	"gomora-dapp/infrastructures/database/mysql"
 	greeter "gomora-dapp/infrastructures/smartcontracts/greeter"
+	nftRepository "gomora-dapp/module/nft/infrastructure/repository"
 	nftService "gomora-dapp/module/nft/infrastructure/service"
 	nftREST "gomora-dapp/module/nft/interfaces/http/rest"
 )
@@ -69,7 +70,14 @@ func (k *kernel) RegisterNFTRESTQueryController() nftREST.NFTQueryController {
 
 // ==========================================================================
 func NFTCommandServiceDI() *nftService.NFTCommandService {
+	commandRepository := &nftRepository.NFTCommandRepository{
+		MySQLDBHandlerInterface: mysqlDBHandler,
+	}
+
 	service := &nftService.NFTCommandService{
+		NFTCommandRepositoryInterface: &nftRepository.NFTCommandRepositoryCircuitBreaker{
+			NFTCommandRepositoryInterface: commandRepository,
+		},
 		GreeterContractInstance: GreeterContractInstance,
 	}
 
@@ -81,7 +89,14 @@ func (k *kernel) nftCommandServiceContainer() *nftService.NFTCommandService {
 }
 
 func (k *kernel) nftQueryServiceContainer() *nftService.NFTQueryService {
+	repository := &nftRepository.NFTQueryRepository{
+		MySQLDBHandlerInterface: mysqlDBHandler,
+	}
+
 	service := &nftService.NFTQueryService{
+		NFTQueryRepositoryInterface: &nftRepository.NFTQueryRepositoryCircuitBreaker{
+			NFTQueryRepositoryInterface: repository,
+		},
 		GreeterContractInstance: GreeterContractInstance,
 	}
 
@@ -90,6 +105,13 @@ func (k *kernel) nftQueryServiceContainer() *nftService.NFTQueryService {
 
 func registerHandlers() {
 	var err error
+
+	// create new mysql database connection
+	mysqlDBHandler = &mysql.MySQLDBHandler{}
+	err = mysqlDBHandler.Connect(os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_DATABASE"), os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"))
+	if err != nil {
+		log.Fatalf("[SERVER] mysql database is not responding %v", err)
+	}
 
 	// connect to blockchain
 	EthHttpClient, err = ethclient.Dial(os.Getenv("ETH_MAINNET_HTTP_ENDPOINT"))

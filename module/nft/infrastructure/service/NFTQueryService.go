@@ -6,10 +6,13 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 
 	greeter "gomora-dapp/infrastructures/smartcontracts/greeter"
+	"gomora-dapp/module/nft/domain/entity"
+	"gomora-dapp/module/nft/domain/repository"
 )
 
 // NFTQueryService handles the nft query service logic
 type NFTQueryService struct {
+	repository.NFTQueryRepositoryInterface
 	GreeterContractInstance *greeter.Greeter
 }
 
@@ -21,6 +24,16 @@ func (service *NFTQueryService) GetGreeting(ctx context.Context) (string, error)
 	}
 
 	return greeting, nil
+}
+
+// GetGreeterContractEventLogs get greeter contract event logs
+func (service *NFTQueryService) GetGreeterContractEventLogs(ctx context.Context) ([]entity.GreeterContractEventLog, error) {
+	res, err := service.NFTQueryRepositoryInterface.SelectGreeterContractEventLogs()
+	if err != nil {
+		return []entity.GreeterContractEventLog{}, err
+	}
+
+	return res, nil
 }
 
 // GetNFTByID retrieves the nft provided by its id

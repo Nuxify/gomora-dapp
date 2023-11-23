@@ -2,11 +2,13 @@ package rest
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 
 	"gomora-dapp/interfaces/http/rest/viewmodels"
 	"gomora-dapp/internal/errors"
 	"gomora-dapp/module/nft/application"
+	types "gomora-dapp/module/nft/interfaces/http"
 )
 
 // NFTQueryController request controller for nft query
@@ -36,6 +38,59 @@ func (controller *NFTQueryController) GetGreeting(w http.ResponseWriter, r *http
 		Data: map[string]interface{}{
 			"greeting": greeting,
 		},
+	}
+
+	response.JSON(w)
+}
+
+// GetGreeterContractEventLogs get greeter contract event logs
+func (controller *NFTQueryController) GetGreeterContractEventLogs(w http.ResponseWriter, r *http.Request) {
+	res, err := controller.NFTQueryServiceInterface.GetGreeterContractEventLogs(context.TODO())
+	if err != nil {
+		var httpCode int
+		var errorMsg string
+
+		switch err.Error() {
+		case errors.MissingRecord:
+			httpCode = http.StatusNotFound
+			errorMsg = "No records found."
+		default:
+			httpCode = http.StatusInternalServerError
+			errorMsg = "Database error."
+		}
+
+		response := viewmodels.HTTPResponseVM{
+			Status:    httpCode,
+			Success:   false,
+			Message:   errorMsg,
+			ErrorCode: err.Error(),
+		}
+
+		response.JSON(w)
+		return
+	}
+
+	var logs []types.GreeterContractEventLogResponse
+
+	for _, logRes := range res {
+		var metadata map[string]interface{}
+		// decode metadata
+		_ = json.Unmarshal([]byte(logRes.Metadata), &metadata)
+
+		logs = append(logs, types.GreeterContractEventLogResponse{
+			TxHash:          logRes.TxHash,
+			ContractAddress: logRes.ContractAddress,
+			Event:           logRes.Event,
+			Metadata:        metadata,
+			BlockTimestamp:  uint64(logRes.BlockTimestamp.Unix()),
+		})
+	}
+
+	response := viewmodels.HTTPResponseVM{
+		Status:  http.StatusOK,
+		Success: true,
+		Message: "Successfully fetched greeter contract event logs.",
+		Data:    logs,
 	}
 
 	response.JSON(w)
