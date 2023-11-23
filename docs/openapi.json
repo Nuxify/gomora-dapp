@@ -1,114 +1,125 @@
 {
-    "openapi": "3.0.2",
-    "info": {
-        "title": "Gomora dApp API",
-        "description": "A Gomora template for building EVM-compatible API and smart contract indexers and listeners",
-        "termsOfService": "https://github.com/Nuxify/gomora-dapp",
-        "contact": {
-            "name": "Gomora dApp API Developer",
-            "email": "hello@nuxify.tech"
-        },
-        "version": "1.0.0"
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Gomora dApp API",
+    "description": "A Gomora template for building EVM-compatible API and smart contract indexers and listeners",
+    "termsOfService": "https://github.com/Nuxify/gomora-dapp",
+    "contact": {
+      "name": "Gomora dApp API Developer",
+      "email": "hello@nuxify.tech"
     },
-    "servers": [
-        {
-            "url": "https://gomora-dapp-api.nuxify.tech/v1",
-            "description": "Production"
-        },
-        {
-            "url": "https://staging-gomora-dapp-api.nuxify.tech/v1",
-            "description": "Staging"
-        },
-        {
-            "url": "http://localhost:8000/v1",
-            "description": "Local"
-        }
-    ],
-    "tags": [
-        {
-            "name": "nft",
-            "description": "NFT service"
-        }
-    ],
-    "paths": {
-        "/nft/greeting/latest": {
-            "get": {
-                "tags": [
-                    "nft"
-                ],
-                "summary": "Get Greeting",
-                "description": "Gets greeting message",
-                "responses": {
-                    "2xx": {
-                        "description": "Success"
-                    },
-                    "4xx": {
-                        "description": "Client side errors"
-                    },
-                    "5xx": {
-                        "description": "Server side errors"
-                    }
-                }
-            }
-        },
-        "/nft/replay": {
-            "get": {
-                "tags": [
-                    "nft"
-                ],
-                "summary": "Replay Greeter Contract Events",
-                "description": "Replays greeter contract events by block number",
-                "parameters": [
-                    {
-                        "name": "fromBlock",
-                        "in": "query",
-                        "description": "from block number",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "toBlock",
-                        "in": "query",
-                        "description": "to block number",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "2xx": {
-                        "description": "Success"
-                    },
-                    "4xx": {
-                        "description": "Client side errors"
-                    },
-                    "5xx": {
-                        "description": "Server side errors"
-                    }
-                }
-            }
-        }
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://gomora-dapp-api.nuxify.tech/v1",
+      "description": "Production"
     },
-    "components": {
-        "schemas": {
-            "CreateRecordRequest": {
-                "required": [
-                    "id",
-                    "data"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    },
-                    "data": {
-                        "type": "string"
-                    }
-                }
-            }
-        }
+    {
+      "url": "https://staging-gomora-dapp-api.nuxify.tech/v1",
+      "description": "Staging"
+    },
+    {
+      "url": "http://localhost:8000/v1",
+      "description": "Local"
     }
+  ],
+  "tags": [
+    {
+      "name": "nft",
+      "description": "NFT service"
+    }
+  ],
+  "paths": {
+    "/nft/greeting/latest": {
+      "get": {
+        "tags": ["nft"],
+        "summary": "Get Greeting",
+        "description": "Gets greeting message",
+        "responses": {
+          "2xx": {
+            "description": "Success"
+          },
+          "4xx": {
+            "description": "Client side errors"
+          },
+          "5xx": {
+            "description": "Server side errors"
+          }
+        }
+      }
+    },
+    "/nft/greeting/logs": {
+      "get": {
+        "tags": ["nft"],
+        "summary": "Get Greeting Contract Event Logs",
+        "description": "Gets greeting contract event logs",
+        "responses": {
+          "2xx": {
+            "description": "Success"
+          },
+          "4xx": {
+            "description": "Client side errors"
+          },
+          "5xx": {
+            "description": "Server side errors"
+          }
+        }
+      }
+    },
+    "/nft/replay": {
+      "get": {
+        "tags": ["nft"],
+        "summary": "Replay Greeter Contract Events",
+        "description": "Replays greeter contract events by block number",
+        "parameters": [
+          {
+            "name": "fromBlock",
+            "in": "query",
+            "description": "from block number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "toBlock",
+            "in": "query",
+            "description": "to block number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "2xx": {
+            "description": "Success"
+          },
+          "4xx": {
+            "description": "Client side errors"
+          },
+          "5xx": {
+            "description": "Server side errors"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateRecordRequest": {
+        "required": ["id", "data"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
 }
