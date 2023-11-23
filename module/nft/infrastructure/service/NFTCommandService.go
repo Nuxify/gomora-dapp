@@ -4,15 +4,22 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	greeter "gomora-dapp/infrastructures/smartcontracts/greeter"
+	"gomora-dapp/module/nft/domain/entity"
+	"gomora-dapp/module/nft/domain/repository"
+	repositoryTypes "gomora-dapp/module/nft/infrastructure/repository/types"
 	"gomora-dapp/module/nft/infrastructure/service/types"
 )
 
 // NFTCommandService handles the nft command service logic
 type NFTCommandService struct {
+	repository.NFTCommandRepositoryInterface
 	GreeterContractInstance *greeter.Greeter
 }
+
+// --------- transaction logs methods
 
 func (service *NFTCommandService) CreateNFTLogSetGreeting(ctx context.Context, txHash, contractAddress string, data types.CreateNFTLogSetGreeting) error {
 	output, err := json.Marshal(data)
@@ -24,6 +31,18 @@ func (service *NFTCommandService) CreateNFTLogSetGreeting(ctx context.Context, t
 	// for now we just print it
 	fmt.Println("tx hash:", txHash, ", contract:", contractAddress, ", greeting:", data.Greeting, ", block timestamp:", data.Timestamp)
 	fmt.Println("Metadata:", string(output))
+
+	// insert to event logs
+	err = service.NFTCommandRepositoryInterface.InsertNFTContractEventLog(repositoryTypes.CreateNFTContractEventLog{
+		TxHash:          txHash,
+		ContractAddress: contractAddress,
+		Event:           entity.LogSetGreeting,
+		Metadata:        string(output),
+		BlockTimestamp:  time.Unix(int64(data.Timestamp), 0),
+	})
+	if err != nil {
+		return err
+	}
 
 	// you can also send notifications here and be sure it will be only triggered one-time
 	if data.IsFromWS {
