@@ -16,7 +16,6 @@ import (
 
 	"gomora-dapp/infrastructures/smartcontracts/greeter"
 	ethRPC "gomora-dapp/internal/ethereum/rpc"
-	"gomora-dapp/module/nft/infrastructure/service"
 	nftServiceTypes "gomora-dapp/module/nft/infrastructure/service/types"
 )
 
@@ -36,15 +35,12 @@ func GreeterEventListener() {
 		return EthWsClient.SubscribeFilterLogs(ctx, query, logs)
 	})
 
-	// for nft command service
-	nftCommandService := NFTCommandServiceDI()
-
 	for {
 		select {
 		case err := <-sub.Err():
 			panic(err)
 		case vLog := <-logs:
-			greeterEventsHandler(nftCommandService, vLog, true)
+			greeterEventsHandler(vLog, true)
 		}
 	}
 }
@@ -65,11 +61,8 @@ func GreeterEventListenerReplayer(fromBlock, toBlock int64) error {
 
 	log.Println("REPLAY:", len(logs), fromBlock, toBlock)
 
-	// for nft command service
-	nftCommandService := NFTCommandServiceDI()
-
 	for _, vLog := range logs {
-		greeterEventsHandler(nftCommandService, vLog, false)
+		greeterEventsHandler(vLog, false)
 	}
 
 	return nil
@@ -88,9 +81,6 @@ func GreeterPollFilter(rpcURL string) {
 	}
 
 	log.Println("POLL FILTER ID:", filterID)
-
-	// for nft command service
-	nftCommandService := NFTCommandServiceDI()
 
 	// get filter changes
 	for {
@@ -116,7 +106,7 @@ func GreeterPollFilter(rpcURL string) {
 		log.Println("POLL FILTER:", len(logs))
 
 		for _, vLog := range logs {
-			greeterEventsHandler(nftCommandService, vLog, false)
+			greeterEventsHandler(vLog, false)
 		}
 
 		time.Sleep(3 * time.Minute)
@@ -124,8 +114,12 @@ func GreeterPollFilter(rpcURL string) {
 }
 
 // Handle greeter contract events
-func greeterEventsHandler(nftCommandService *service.NFTCommandService, vLog types.Log, isFromWS bool) {
+func greeterEventsHandler(vLog types.Log, isFromWS bool) {
 	// get topics, topic 0 is signature of event, topic 1 is first indexed
+
+	// for nft command service
+	nftCommandService := NFTCommandServiceDI()
+
 	var topics [4]string
 	for i := range vLog.Topics {
 		topics[i] = vLog.Topics[i].Hex()
