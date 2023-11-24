@@ -115,11 +115,10 @@ func GreeterPollFilter(rpcURL string) {
 
 // Handle greeter contract events
 func greeterEventsHandler(vLog types.Log, isFromWS bool) {
-	// get topics, topic 0 is signature of event, topic 1 is first indexed
-
 	// for nft command service
 	nftCommandService := NFTCommandServiceDI()
 
+	// get topics, topic 0 is signature of event, topic 1 is first indexed
 	var topics [4]string
 	for i := range vLog.Topics {
 		topics[i] = vLog.Topics[i].Hex()
