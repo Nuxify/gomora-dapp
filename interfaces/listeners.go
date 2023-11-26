@@ -108,7 +108,7 @@ func GreeterPollFilter(rpcURL string) {
 				}
 
 				log.Println("POLL FILTER ID:", filterID)
-				time.Sleep(3 * time.Second)
+				time.Sleep(20 * time.Second) // short polling interval
 			}
 			continue
 		}
