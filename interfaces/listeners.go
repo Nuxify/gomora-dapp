@@ -103,15 +103,18 @@ func GreeterPollFilter(rpcURL string) {
 				filterID, err = ethRPC.NewFilter(rpcURL, query)
 				if err != nil {
 					log.Println(err)
+					time.Sleep(10 * time.Second)
+					continue
 				}
 
-				log.Println("POLL FILTER ID:", filterID)
-				time.Sleep(10 * time.Second) // reconnect after 10s
+				log.Println("NEW POLL FILTER ID:", filterID)
 			}
+
+			time.Sleep(3 * time.Second)
 			continue
 		}
 
-		log.Println("POLL FILTER:", len(logs))
+		log.Println("POLL FILTER LENGTH:", len(logs))
 
 		for _, vLog := range logs {
 			greeterEventsHandler(nftCommandService, vLog, false)
