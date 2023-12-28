@@ -20,6 +20,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 
 	"gomora-dapp/infrastructures/database/mysql"
+	"gomora-dapp/infrastructures/database/mysql/types"
 	greeter "gomora-dapp/infrastructures/smartcontracts/greeter"
 	nftRepository "gomora-dapp/module/nft/infrastructure/repository"
 	nftService "gomora-dapp/module/nft/infrastructure/service"
@@ -106,11 +107,18 @@ func (k *kernel) nftQueryServiceContainer() *nftService.NFTQueryService {
 func registerHandlers() {
 	var err error
 
-	// create new mysql database connection
+	// connect to database
 	mysqlDBHandler = &mysql.MySQLDBHandler{}
-	err = mysqlDBHandler.Connect(os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_DATABASE"), os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"))
+
+	err = mysqlDBHandler.Connect(types.ConnectionParams{
+		DBHost:     os.Getenv("DB_HOST"),
+		DBPort:     os.Getenv("DB_PORT"),
+		DBDatabase: os.Getenv("DB_DATABASE"),
+		DBUsername: os.Getenv("DB_USERNAME"),
+		DBPassword: os.Getenv("DB_PASSWORD"),
+	})
 	if err != nil {
-		log.Fatalf("[SERVER] mysql database is not responding %v", err)
+		log.Fatalf("[SERVER] mysql database is not responding: %v", err)
 	}
 
 	// connect to blockchain
