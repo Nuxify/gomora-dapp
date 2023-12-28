@@ -61,7 +61,6 @@ func (h *MySQLDBHandler) ConnectViaSSH(paramsSSH types.SSHConnectionParams, para
 	conn, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK"))
 	if err != nil {
 		return err
-
 	}
 
 	// create a new instance of the ssh agent
@@ -83,7 +82,6 @@ func (h *MySQLDBHandler) ConnectViaSSH(paramsSSH types.SSHConnectionParams, para
 	if paramsSSH.SSHPassword != "" {
 		sshConfig.Auth = append(sshConfig.Auth, ssh.PasswordCallback(func() (string, error) {
 			return paramsSSH.SSHPassword, nil
-
 		}))
 	}
 
