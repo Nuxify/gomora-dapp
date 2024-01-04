@@ -33,8 +33,8 @@ run:	build
 
 .PHONY: up
 up:
-	docker-compose down
-	docker-compose up -d --build
+	docker compose down
+	docker compose up -d --build
 
 .PHONY: contract-build
 contract-build:
