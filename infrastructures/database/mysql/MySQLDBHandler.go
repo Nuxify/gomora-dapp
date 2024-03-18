@@ -8,12 +8,12 @@ import (
 	"os"
 	"time"
 
+	"gomora-dapp/infrastructures/database/mysql/types"
+
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
-
-	"gomora-dapp/infrastructures/database/mysql/types"
 )
 
 // MySQLDBHandler handles mysql operations
@@ -31,7 +31,7 @@ func (h *MySQLDBHandler) Connect(params types.ConnectionParams) error {
 		params.Dial = "tcp" // default
 	}
 
-	conn, err := sqlx.Connect("mysql", fmt.Sprintf("%s:%s@%s(%s:%s)/%s?parseTime=true", params.DBUsername, params.DBPassword, params.Dial, params.DBHost, params.DBPort, params.DBDatabase))
+	conn, err := sqlx.Connect("mysql", fmt.Sprintf("%s:%s@%s(%s:%s)/%s?parseTime=true&sql_mode=TRADITIONAL", params.DBUsername, params.DBPassword, params.Dial, params.DBHost, params.DBPort, params.DBDatabase))
 	if err != nil {
 		return err
 	}
