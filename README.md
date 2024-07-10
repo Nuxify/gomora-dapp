@@ -4,41 +4,84 @@ A Gomora template for building EVM-compatible API and smart contract indexers an
 ## Local Development
 
 Setup the .env file first
-- cp .env.example .env
+
+```bash
+cp .env.example .env
+```
 
 To bootstrap everything, run:
-- make
-
+```bash
+make
+```
 The command above will install, build, and run the binary
 
 For manual install:
-- make install
+```bash
+make install
+```
 
 For lint:
-- make lint
+```bash
+make install
+```
 
 Just ensure you installed golangci-lint.
 
 To test:
-- make test
+```bash
+make test
+```
 
 For manual build:
-- make build
-- NOTE: the output for this is in bin/
+```bash
+make build
+
+# The output for this is in bin/
+```
 
 For contract build:
-- make contract-build
-- NOTE: the output for this is in infrastructures/smartcontracts
+
+```bash
+make contract-build
+
+# the output for this is in infrastructures/smartcontracts
+```
 
 > You can easily listen to the example Greeter contract (https://mumbai.polygonscan.com/address/0x927ec7f1f1CA6b09d0c448868aAB2C56d465a6e8#code) deployed in Polygon Testnet (Mumbai)
 
 ## Docker Build
 
 To build, run:
-- make run
+```bash
+make run
+```
 
 To run the container:
-- make up
+```bash
+make up
+```
+
+## Database Migration
+
+Gomora uses go-migrate (https://github.com/golang-migrate/migrate) to handle migration. Download and change your migrate database command accordingly.
+
+To create a schema, run:
+
+```bash
+make schema NAME=<init_schema>
+```
+
+To migrate up, run:
+
+```bash
+make migrate-up STEPS=<remove STEPS to apply all or specify step number>
+```
+
+To migrate down, run:
+
+```bash
+make migrate-down STEPS=<remove STEPS to apply all or specify step number>
+```
 
 ## License
 

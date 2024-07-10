@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS `greeter_contract_event_logs`;
