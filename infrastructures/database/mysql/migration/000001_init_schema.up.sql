@@ -5,4 +5,4 @@ CREATE TABLE `greeter_contract_event_logs` (
   `metadata` json NOT NULL,
   `block_timestamp` timestamp NOT NULL,
   PRIMARY KEY (`tx_hash`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
