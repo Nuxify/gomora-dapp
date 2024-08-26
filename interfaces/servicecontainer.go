@@ -161,5 +161,6 @@ func ServiceContainer() ServiceContainerInterface {
 			k = &kernel{}
 		})
 	}
+
 	return k
 }
