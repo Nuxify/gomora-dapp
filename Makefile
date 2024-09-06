@@ -46,6 +46,14 @@ migrate-up:
 migrate-down:
 	migrate -path infrastructures/database/mysql/migration -database "mysql://${DB_USERNAME}:${DB_PASSWORD}@tcp(${DB_HOST}:${DB_PORT})/${DB_DATABASE}" -verbose down ${STEPS}
 
+.PHONY: migrate-version
+migrate-version:
+	migrate -path infrastructures/database/mysql/migration -database "mysql://${DB_USERNAME}:${DB_PASSWORD}@tcp(${DB_HOST}:${DB_PORT})/${DB_DATABASE}" version
+
+.PHONY: migrate-force
+migrate-force:
+	migrate -path infrastructures/database/mysql/migration -database "mysql://${DB_USERNAME}:${DB_PASSWORD}@tcp(${DB_HOST}:${DB_PORT})/${DB_DATABASE}" force ${STEPS}
+
 .PHONY: contract-build
 contract-build:
 	rm -rf infrastructures/smartcontracts/greeter/Greeter.go
