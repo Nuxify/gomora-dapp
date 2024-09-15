@@ -83,6 +83,17 @@ To migrate down, run:
 make migrate-down STEPS=<remove STEPS to apply all or specify step number>
 ```
 
+To check migrate version, run:
+
+```bash
+make migrate-version
+````
+
+To force migrate, run:
+```bash
+make migrate-force STEPS=<specify step number>
+```
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
