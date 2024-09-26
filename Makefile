@@ -3,7 +3,7 @@ include .env
 # set default shell
 SHELL = bash -e -o pipefail
 
-default: run
+default: run-dev
 
 .PHONY:	install
 install:
