@@ -15,11 +15,14 @@ type NFTQueryRepositoryCircuitBreaker struct {
 // SelectGreeterContractEventLogs is a decorator for the select greeter contract event logs repository
 func (repository *NFTQueryRepositoryCircuitBreaker) SelectGreeterContractEventLogs() ([]entity.GreeterContractEventLog, error) {
 	output := make(chan []entity.GreeterContractEventLog, 1)
+	errChan := make(chan error, 1)
+
 	hystrix.ConfigureCommand("select_greeter_contract_event_logs", config.Settings())
 	errors := hystrix.Go("select_greeter_contract_event_logs", func() error {
 		logs, err := repository.NFTQueryRepositoryInterface.SelectGreeterContractEventLogs()
 		if err != nil {
-			return err
+			errChan <- err
+			return nil
 		}
 
 		output <- logs
@@ -29,6 +32,8 @@ func (repository *NFTQueryRepositoryCircuitBreaker) SelectGreeterContractEventLo
 	select {
 	case out := <-output:
 		return out, nil
+	case err := <-errChan:
+		return []entity.GreeterContractEventLog{}, err
 	case err := <-errors:
 		return []entity.GreeterContractEventLog{}, err
 	}
