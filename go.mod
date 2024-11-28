@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/ethereum/go-ethereum v1.11.4
-	github.com/go-chi/chi v1.5.4
+	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/jmoiron/sqlx v1.3.5

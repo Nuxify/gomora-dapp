@@ -19,8 +19,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 
 	"gomora-dapp/interfaces"
 	"gomora-dapp/interfaces/http/rest/middlewares/cors"
