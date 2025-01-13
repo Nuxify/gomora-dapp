@@ -58,11 +58,11 @@ migrate-down:
 
 .PHONY: migrate-version
 migrate-version:
-	migrate -path infrastructures/database/mysql/migration -database "mysql://${DB_USERNAME}:${DB_PASSWORD}@tcp(${DB_HOST}:${DB_PORT})/${DB_DATABASE}" version
+	migrate -path infrastructures/database/mysql/migrations -database "mysql://${DB_USERNAME}:${DB_PASSWORD}@tcp(${DB_HOST}:${DB_PORT})/${DB_DATABASE}" version
 
 .PHONY: migrate-force
 migrate-force:
-	migrate -path infrastructures/database/mysql/migration -database "mysql://${DB_USERNAME}:${DB_PASSWORD}@tcp(${DB_HOST}:${DB_PORT})/${DB_DATABASE}" force ${STEPS}
+	migrate -path infrastructures/database/mysql/migrations -database "mysql://${DB_USERNAME}:${DB_PASSWORD}@tcp(${DB_HOST}:${DB_PORT})/${DB_DATABASE}" force ${STEPS}
 
 .PHONY: contract-build
 contract-build:
