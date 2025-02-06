@@ -22,7 +22,7 @@ type NFTCommandService struct {
 // --------- transaction logs methods
 
 // CreateNFTLogSetGreeting create nft log set greeting event
-func (service *NFTCommandService) CreateNFTLogSetGreeting(ctx context.Context, txHash, contractAddress string, data types.CreateNFTLogSetGreeting) error {
+func (service *NFTCommandService) CreateNFTLogSetGreeting(ctx context.Context, txHash string, logIndex uint, contractAddress string, data types.CreateNFTLogSetGreeting) error {
 	output, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -30,12 +30,13 @@ func (service *NFTCommandService) CreateNFTLogSetGreeting(ctx context.Context, t
 
 	// optionally store it in a persistent storage like database to log the logs
 	// for now we just print it
-	fmt.Println("tx hash:", txHash, ", contract:", contractAddress, ", greeting:", data.Greeting, ", block timestamp:", data.Timestamp)
+	fmt.Println("tx hash:", txHash, "log index:", logIndex, "contract:", contractAddress, "greeting:", data.Greeting, "block timestamp:", data.Timestamp)
 	fmt.Println("Metadata:", string(output))
 
 	// insert to event logs
 	err = service.NFTCommandRepositoryInterface.InsertGreeterContractEventLog(repositoryTypes.CreateGreeterContractEventLog{
 		TxHash:          txHash,
+		LogIndex:        logIndex,
 		ContractAddress: contractAddress,
 		Event:           entity.LogSetGreeting,
 		Metadata:        string(output),
