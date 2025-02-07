@@ -133,6 +133,7 @@ func greeterEventsHandler(nftCommandService *service.NFTCommandService, vLog typ
 	}
 
 	txHash := vLog.TxHash.Hex()
+	logIndex := vLog.Index
 	eventSignature := topics[0]
 
 	/// LogSetGreeting event
@@ -149,7 +150,7 @@ func greeterEventsHandler(nftCommandService *service.NFTCommandService, vLog typ
 				IsFromWS:  isFromWS,
 			}
 
-			err := nftCommandService.CreateNFTLogSetGreeting(context.TODO(), txHash, GreeterContractAddress.Hex(), event)
+			err := nftCommandService.CreateNFTLogSetGreeting(context.TODO(), txHash, logIndex, GreeterContractAddress.Hex(), event)
 			if err != nil {
 				log.Println("[error] LogSetGreeting cannot update", err)
 			}

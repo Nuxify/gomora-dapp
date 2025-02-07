@@ -8,10 +8,11 @@ const (
 
 // GreeterContractEventLog holds the  greeter contract event log entity fields
 type GreeterContractEventLog struct {
-	TxHash          string `db:"tx_hash"`
-	ContractAddress string `db:"contract_address"`
-	Event           string
-	Metadata        string
+	TxHash          string    `db:"tx_hash"`
+	LogIndex        uint      `db:"log_index"`
+	ContractAddress string    `db:"contract_address"`
+	Event           string    `db:"event"`
+	Metadata        string    `db:"metadata"`
 	BlockTimestamp  time.Time `db:"block_timestamp"`
 }
 
