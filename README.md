@@ -47,7 +47,7 @@ make contract-build
 # the output for this is in infrastructures/smartcontracts
 ```
 
-> You can easily listen to the example Greeter contract (https://mumbai.polygonscan.com/address/0x927ec7f1f1CA6b09d0c448868aAB2C56d465a6e8#code) deployed in Polygon Testnet (Mumbai)
+> You can easily listen to the example Greeter contract (https://sepolia.etherscan.io/address/0x0e10e90f67C67c2cB9DD5071674FDCfb7853a6F5#code) deployed in Ethereum Testnet (Sepolia)
 
 ## Docker Build
 
@@ -68,7 +68,7 @@ Gomora uses go-migrate (https://github.com/golang-migrate/migrate) to handle mig
 To create a schema, run:
 
 ```bash
-make schema NAME=<init_schema>
+NAME=<create_users_schema> make migrate-schema
 ```
 
 To migrate up, run:
