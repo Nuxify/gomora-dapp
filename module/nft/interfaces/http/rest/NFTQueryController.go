@@ -49,14 +49,16 @@ func (controller *NFTQueryController) GetGreeterContractEventLogs(w http.Respons
 	if err != nil {
 		var httpCode int
 		var errorMsg string
+		errorCode := err.Error()
 
-		switch err.Error() {
+		switch errorCode {
 		case errors.MissingRecord:
 			httpCode = http.StatusNotFound
 			errorMsg = "No records found."
 		default:
 			httpCode = http.StatusInternalServerError
 			errorMsg = "Database error."
+			errorCode = errors.ServerError
 		}
 
 		response := viewmodels.HTTPResponseVM{
