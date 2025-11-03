@@ -1,12 +1,17 @@
 package types
 
-import "time"
+import (
+	"time"
+
+	"gomora-dapp/module/nft/domain/entity"
+)
 
 type CreateGreeterContractEventLog struct {
 	TxHash          string
 	LogIndex        uint
 	ContractAddress string
-	Event           string
+	Chain           entity.Chain
+	Event           entity.Event
 	Metadata        string
 	BlockTimestamp  time.Time
 }
