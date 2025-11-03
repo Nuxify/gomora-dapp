@@ -2,8 +2,13 @@ package entity
 
 import "time"
 
+type Chain string
+type Event string
+
 const (
-	LogSetGreeting string = "LogSetGreeting"
+	LogSetGreetingEvent Event = "LogSetGreeting"
+
+	EthereumChain Chain = "ETHEREUM"
 )
 
 // GreeterContractEventLog holds the  greeter contract event log entity fields
@@ -11,7 +16,8 @@ type GreeterContractEventLog struct {
 	TxHash          string    `db:"tx_hash"`
 	LogIndex        uint      `db:"log_index"`
 	ContractAddress string    `db:"contract_address"`
-	Event           string    `db:"event"`
+	Chain           Chain     // enum
+	Event           Event     `db:"event"` // enum
 	Metadata        string    `db:"metadata"`
 	BlockTimestamp  time.Time `db:"block_timestamp"`
 }

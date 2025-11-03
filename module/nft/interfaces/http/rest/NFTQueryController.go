@@ -83,6 +83,7 @@ func (controller *NFTQueryController) GetGreeterContractEventLogs(w http.Respons
 			TxHash:          logRes.TxHash,
 			LogIndex:        logRes.LogIndex,
 			ContractAddress: logRes.ContractAddress,
+			Chain:           logRes.Chain,
 			Event:           logRes.Event,
 			Metadata:        metadata,
 			BlockTimestamp:  uint64(logRes.BlockTimestamp.Unix()),
