@@ -22,7 +22,7 @@ type NFTCommandService struct {
 // --------- transaction logs methods
 
 // CreateNFTLogSetGreeting create nft log set greeting event
-func (service *NFTCommandService) CreateNFTLogSetGreeting(ctx context.Context, txHash string, logIndex uint, contractAddress string, chain string, data types.CreateNFTLogSetGreeting) error {
+func (service *NFTCommandService) CreateNFTLogSetGreeting(ctx context.Context, txHash string, logIndex uint, contractAddress, chain string, data types.CreateNFTLogSetGreeting) error {
 	output, err := json.Marshal(data)
 	if err != nil {
 		return err
