@@ -151,7 +151,7 @@ func greeterEventsHandler(nftCommandService *service.NFTCommandService, vLog typ
 				IsFromWS:  isFromWS,
 			}
 
-			err := nftCommandService.CreateNFTLogSetGreeting(context.TODO(), txHash, logIndex, GreeterContractAddress.Hex(), os.Getenv("POLYGON_CHAIN"), event)
+			err := nftCommandService.CreateNFTLogSetGreeting(context.TODO(), txHash, logIndex, GreeterContractAddress.Hex(), os.Getenv("ETH_CHAIN"), event)
 			if err != nil {
 				log.Println("[error] LogSetGreeting cannot update", err)
 			}

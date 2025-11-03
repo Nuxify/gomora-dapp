@@ -8,7 +8,7 @@ type Event string
 const (
 	LogSetGreetingEvent Event = "LogSetGreeting"
 
-	PolygonChain Chain = "POLYGON"
+	EthereumChain Chain = "ETHEREUM"
 )
 
 // GreeterContractEventLog holds the  greeter contract event log entity fields
