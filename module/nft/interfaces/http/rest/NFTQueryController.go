@@ -57,7 +57,7 @@ func (controller *NFTQueryController) GetGreeterContractEventLogs(w http.Respons
 			errorMsg = "No records found."
 		default:
 			httpCode = http.StatusInternalServerError
-			errorMsg = "Database error."
+			errorMsg = "Please contact technical support."
 			errorCode = errors.ServerError
 		}
 
@@ -65,7 +65,7 @@ func (controller *NFTQueryController) GetGreeterContractEventLogs(w http.Respons
 			Status:    httpCode,
 			Success:   false,
 			Message:   errorMsg,
-			ErrorCode: err.Error(),
+			ErrorCode: errorCode,
 		}
 
 		response.JSON(w)
