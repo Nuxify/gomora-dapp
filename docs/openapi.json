@@ -37,14 +37,52 @@
         "summary": "Get Greeting",
         "description": "Gets greeting message",
         "responses": {
-          "2xx": {
-            "description": "Success"
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/APIResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "greeting": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           },
           "4xx": {
-            "description": "Client side errors"
+            "description": "Client side errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorResponse"
+                }
+              }
+            }
           },
           "5xx": {
-            "description": "Server side errors"
+            "description": "Server side errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -55,14 +93,50 @@
         "summary": "Get Greeting Contract Event Logs",
         "description": "Gets greeting contract event logs",
         "responses": {
-          "2xx": {
-            "description": "Success"
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/APIResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/GetGreeterContractEventLogResponse"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           },
           "4xx": {
-            "description": "Client side errors"
+            "description": "Client side errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorResponse"
+                }
+              }
+            }
           },
           "5xx": {
-            "description": "Server side errors"
+            "description": "Server side errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -93,14 +167,106 @@
           }
         ],
         "responses": {
-          "2xx": {
-            "description": "Success"
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse"
+                }
+              }
+            }
           },
           "4xx": {
-            "description": "Client side errors"
+            "description": "Client side errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorResponse"
+                }
+              }
+            }
           },
           "5xx": {
-            "description": "Server side errors"
+            "description": "Server side errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "APIResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Operation successful"
+          },
+          "data": {
+            "type": "object",
+            "example": {}
+          }
+        }
+      },
+      "APIErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "errorCode": {
+            "type": "string",
+            "example": "BAD_REQUEST"
+          },
+          "data": {
+            "type": "object",
+            "example": {}
+          }
+        }
+      },
+      "GetGreeterContractEventLogResponse": {
+        "type": "object",
+        "properties": {
+          "txHash": {
+            "type": "string"
+          },
+          "logIndex": {
+            "type": "string"
+          },
+          "contractAddress": {
+            "type": "string"
+          },
+          "chain": {
+            "type": "string",
+            "enum": ["ETHEREUM"]
+          },
+          "event": {
+            "type": "string",
+            "enum": ["LogSetGreeting"]
+          },
+          "metadata": {
+            "type": "object",
+            "example": {}
+          },
+          "blockTimestamp": {
+            "type": "integer"
           }
         }
       }

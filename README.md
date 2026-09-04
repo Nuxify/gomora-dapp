@@ -22,7 +22,7 @@ make install
 
 For lint:
 ```bash
-make install
+make lint
 ```
 
 Just ensure you installed golangci-lint.
