@@ -122,18 +122,18 @@ func registerHandlers() {
 	}
 
 	// connect to blockchain
-	EthHttpClient, err = ethclient.Dial(os.Getenv("ETH_MAINNET_HTTP_ENDPOINT"))
+	EthHttpClient, err = ethclient.Dial(os.Getenv("ETH_HTTP_ENDPOINT"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	EthWsClient, err = ethclient.Dial(os.Getenv("ETH_MAINNET_WS_ENDPOINT"))
+	EthWsClient, err = ethclient.Dial(os.Getenv("ETH_WS_ENDPOINT"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// load smart contracts
-	GreeterContractAddress = common.HexToAddress(os.Getenv("ETH_MAINNET_GREETER_CONTRACT_ADDRESS"))
+	GreeterContractAddress = common.HexToAddress(os.Getenv("ETH_GREETER_CONTRACT_ADDRESS"))
 	GreeterContractABI, err = abi.JSON(strings.NewReader(string(greeter.GreeterABI)))
 	if err != nil {
 		log.Fatal(err)
@@ -145,7 +145,7 @@ func registerHandlers() {
 
 	// run event listener
 	go GreeterEventListener()
-	go GreeterPollFilter(os.Getenv("ETH_MAINNET_HTTP_ENDPOINT")) // TODO: check if chain rpc supports eth_filterChanges
+	go GreeterPollFilter(os.Getenv("ETH_HTTP_ENDPOINT")) // TODO: check if chain rpc supports eth_filterChanges
 }
 
 // ServiceContainer export instantiated service container once
